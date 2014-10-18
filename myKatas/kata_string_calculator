@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<nugget name="KATA_STING_CALCUTATOR.NUGG">
+ <CLAS CLSNAME="ZCL_STRING_CALCULATOR" VERSION="1" LANGU="E" DESCRIPT="Test" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" WITH_UNIT_TESTS="X" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+  <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+  <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+  <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+  <localTestClasses>*&quot;* use this source file for your ABAP unit test classes
+
+CLASS ltcl_string_calculator DEFINITION FINAL FOR TESTING
+  DURATION SHORT
+  RISK LEVEL HARMLESS.
+
+  PRIVATE SECTION.
+    METHODS:
+      setup,
+
+      given
+        IMPORTING
+          input             TYPE string OPTIONAL
+        RETURNING
+          VALUE(r_instance) TYPE REF TO ltcl_string_calculator,
+
+      then_should_be
+        IMPORTING
+          output TYPE i
+        RAISING
+          cx_static_check,
+
+      then_should_raise_exception,
+
+      no_input FOR TESTING
+        RAISING cx_static_check,
+
+      empty_input FOR TESTING
+        RAISING cx_static_check,
+
+      single_input FOR TESTING
+        RAISING cx_static_check,
+
+      delimiter FOR TESTING
+        RAISING cx_static_check,
+
+      delimiter_with_three_values FOR TESTING
+        RAISING cx_static_check,
+
+      just_delimiters FOR TESTING
+        RAISING cx_static_check,
+
+      with_spaces FOR TESTING
+        RAISING cx_static_check,
+
+      different_delimiter FOR TESTING
+        RAISING cx_static_check,
+
+      different_delimiters FOR TESTING
+        RAISING cx_static_check,
+
+      escaping FOR TESTING
+        RAISING cx_static_check,
+
+      delimiter_with_diff_len FOR TESTING
+        RAISING cx_static_check,
+
+      negative_numbers FOR TESTING
+        RAISING cx_static_check,
+
+      number_greater_than_thousand FOR TESTING
+        RAISING cx_static_check.
+
+    DATA: lo_calculator TYPE REF TO zcl_string_calculator,
+          _input        TYPE string.
+ENDCLASS.
+
+
+CLASS ltcl_string_calculator IMPLEMENTATION.
+
+  METHOD given.
+    _input = input.
+    r_instance = me.
+  ENDMETHOD.
+
+  METHOD then_should_be.
+    cl_abap_unit_assert=&gt;assert_equals(
+        exp = output
+        act = lo_calculator-&gt;add( _input ) ).
+  ENDMETHOD.
+
+  METHOD then_should_raise_exception.
+    TRY.
+        lo_calculator-&gt;add( _input ).
+      CATCH cx_issue.
+        RETURN.
+    ENDTRY.
+    cl_abap_unit_assert=&gt;fail( ).
+  ENDMETHOD.
+
+  METHOD setup.
+    lo_calculator = NEW zcl_string_calculator( ).
+  ENDMETHOD.
+
+  METHOD no_input.
+    given( )-&gt;then_should_be( 0 ).
+  ENDMETHOD.
+
+  METHOD empty_input.
+    given( ` ` )-&gt;then_should_be( 0 ).
+  ENDMETHOD.
+
+  METHOD single_input.
+    given( `1` )-&gt;then_should_be( 1 ).
+  ENDMETHOD.
+
+  METHOD delimiter.
+    given( `1;2` )-&gt;then_should_be( 3 ).
+  ENDMETHOD.
+
+  METHOD delimiter_with_three_values.
+    given( `3;2;4` )-&gt;then_should_be( 9 ).
+  ENDMETHOD.
+
+  METHOD with_spaces.
+    given( ` 1 ; 2 ` )-&gt;then_should_be( 3 ).
+  ENDMETHOD.
+
+  METHOD different_delimiter.
+    given( `2\3` )-&gt;then_should_be( 5 ).
+  ENDMETHOD.
+
+  METHOD different_delimiters.
+    given( `3;2\3;1` )-&gt;then_should_be( 9 ).
+  ENDMETHOD.
+
+  METHOD escaping.
+    given( `1\n2,3` )-&gt;then_should_be( 6 ).
+  ENDMETHOD.
+
+  METHOD delimiter_with_diff_len.
+    given( `//***\1***2***3\2***2` )-&gt;then_should_be( 10 ).
+  ENDMETHOD.
+
+  METHOD just_delimiters.
+    given( ` ; \ ` )-&gt;then_should_be( 0 ).
+  ENDMETHOD.
+
+  METHOD negative_numbers.
+    given( `-1` )-&gt;then_should_raise_exception( ).
+  ENDMETHOD.
+
+  METHOD number_greater_than_thousand.
+    given( `999 ; 1001 ; 3` )-&gt;then_should_be( 1002 ).
+  ENDMETHOD.
+ENDCLASS.</localTestClasses>
+  <attribute CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="CO_MAX_VALUE" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="2" ATTVALUE="1000" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="CO_MIN_VALUE" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="2" ATTVALUE="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="DELIMITERS" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+  <method CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="ADD" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="ADD" SCONAME="I_STRING" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+   <parameter CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="ADD" SCONAME="R_RESULT" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="I"/>
+   <exception CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="ADD" SCONAME="CX_ISSUE" VERSION="1" LANGU="E" MTDTYPE="0" EDITORDER="1 "/>
+   <source>METHOD add.
+    r_result = REDUCE i( INIT result = 0
+                         FOR number IN _get_numbers_from_string( i_string )
+                         NEXT result = result + _filter_only_valid_values(
+                                                        CONV i( substring( val = i_string
+                                                                           off = number-offset
+                                                                           len = number-length ) ) ) ).
+  ENDMETHOD.</source>
+  </method>
+  <method CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+   <source>METHOD constructor.
+    delimiters = `;`
+              &amp;&amp; `\\n`
+              &amp;&amp; `,`
+              &amp;&amp; `/`
+              &amp;&amp; `\*`.
+  ENDMETHOD.</source>
+  </method>
+  <method CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="_FILTER_ONLY_VALID_VALUES" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="_FILTER_ONLY_VALID_VALUES" SCONAME="I_RAW_NUMBER" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+   <parameter CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="_FILTER_ONLY_VALID_VALUES" SCONAME="R_VALID_NUMBER" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="I"/>
+   <exception CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="_FILTER_ONLY_VALID_VALUES" SCONAME="CX_ISSUE" VERSION="1" LANGU="E" MTDTYPE="0" EDITORDER="1 "/>
+   <source>METHOD _filter_only_valid_values.
+    r_valid_number = COND i( WHEN i_raw_number &gt;= co_max_value
+                                  THEN 0
+                             WHEN i_raw_number &lt; co_min_value
+                                  THEN THROW cx_issue( )
+                             ELSE i_raw_number ).
+  ENDMETHOD.</source>
+  </method>
+  <method CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="_GET_NUMBERS_FROM_STRING" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="_GET_NUMBERS_FROM_STRING" SCONAME="I_STRING" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+   <parameter CLSNAME="ZCL_STRING_CALCULATOR" CMPNAME="_GET_NUMBERS_FROM_STRING" SCONAME="R_NUMBERS" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MATCH_RESULT_TAB"/>
+   <source>METHOD _get_numbers_from_string.
+    FIND ALL OCCURRENCES OF
+             REGEX `([^` &amp;&amp; delimiters &amp;&amp; `]+)+`
+             IN i_string
+             RESULTS r_numbers
+             IGNORING CASE.
+  ENDMETHOD.</source>
+  </method>
+ </CLAS>
+</nugget>
